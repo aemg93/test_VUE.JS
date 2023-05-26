@@ -2,7 +2,7 @@
   <div class="container">
     <h1>Detalles del Personaje</h1>
     <div class="row">
-      <div class="col-md-6" style="width: auto">
+      <div class="col-md-10" style="width: auto">
         <div v-if="selectedCharacter" class="card">
           <div class="row no-gutters">
             <div class="col-md-4">
