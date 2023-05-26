@@ -8,10 +8,10 @@
             <img :src="character.image" :alt="character.name" class="card-img-top" width="100">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
-              <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex  align-items-center">
                 <input type="button" value="Seleccionar" @click="toggleSelection(character)" :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
                 <div class="mx-4"></div>
-                <button @click="viewDetails(character)" class="btn btn-info">Ver detalle</button>
+                <button @click="viewDetails(character)" class="btn btn-info p-1">Ver detalle</button>
               </div>
             </div>
           </div>
@@ -22,7 +22,13 @@
       <h2>Personajes seleccionados:</h2>
       <ul class="selected-characters-list">
         <li v-for="character in selectedCharacters" :key="character.id">
-          {{ character.name }}
+          <div>
+            <h4>{{ character.name }}</h4>
+            <img :src="character.image" :alt="character.name" width="100">
+            <p>Estado: {{ character.status }}</p>
+            <p>Especie: {{ character.species }}</p>
+            <!-- Agrega cualquier otra información que desees mostrar -->
+          </div>
         </li>
       </ul>
     </div>

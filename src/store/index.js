@@ -1,17 +1,24 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+// En tu archivo store.js
 
-Vue.use(Vuex)
+import Vue from 'vue';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-  },
-  getters: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
+    selectedCharacters: {
+      state: {
+        selectedCharacters: []
+      },
+      mutations: {
+        addSelectedCharacter(state, character) {
+          state.selectedCharacters.push(character);
+        },
+        removeSelectedCharacter(state, character) {
+          state.selectedCharacters = state.selectedCharacters.filter(c => c.id !== character.id);
+        }
+      }
+    }
   }
-})
+});
