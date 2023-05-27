@@ -81,6 +81,8 @@ export default {
       } else {
         if (this.selectedCharacters.length < 3) {
           this.selectedCharacters.push(character);
+        } else {
+          alert('¡Solo se pueden seleccionar hasta tres personajes!');
         }
       }
     },
