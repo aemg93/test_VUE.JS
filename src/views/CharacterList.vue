@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+
     <div class="selected-characters">
       <h4>Personajes seleccionados:</h4>
       <div v-for="character in selectedCharacters" :key="character.id" class="card">
@@ -22,19 +23,24 @@
         <div class="card-body">
           <h5 class="card-title">{{ character.name }}</h5>
           <p>{{ character.species }} | {{ character.status }}</p>
-          <button @click="viewDetails(character)" class="btn btn-info">Ver detalles</button>
         </div>
+      </div>
+      <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
+    </div>
+
+    <div v-if="showDetails" class="character-details">
+      <h4>Detalles de los personajes seleccionados:</h4>
+      <div v-for="character in selectedCharacters" :key="character.id">
+        <h5>{{ character.name }}</h5>
+        <img :src="character.image">
+        <p>Nombre: {{ character.name }}</p>
+        <p>Estado: {{ character.status }}</p>
+        <p>Género: {{ character.gender }}</p>
+        <p>Género: {{ character.results }}</p>
+        <hr>
       </div>
     </div>
 
-    <div v-if="selectedCharacterDetails" class="character-details">
-      <h4>Detalles del personaje:</h4>
-      <img :src="selectedCharacterDetails.image">
-      <p>Nombre: {{ selectedCharacterDetails.name }}</p>
-      <p>Estado: {{ selectedCharacterDetails.status }}</p>
-      <p>Género: {{ selectedCharacterDetails.gender }}</p>
-      <!-- Agrega más detalles según tus necesidades -->
-    </div>
     <div class="pagination d-flex justify-content-center pt-2">
       <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary btn-sm">&laquo;</button>
       <div class="page-indicator">
@@ -50,8 +56,13 @@
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
+  data() {
+    return {
+      showDetails: false,
+    }
+  },
   computed: {
-    ...mapGetters(['characters', 'nextPage', 'hasNextPage', 'selectedCharacters', 'selectedCharacterDetails'])
+    ...mapGetters(['characters', 'nextPage', 'hasNextPage', 'selectedCharacters'])
   },
   methods: {
     ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails']),
@@ -61,8 +72,12 @@ export default {
     isSelected(character) {
       return this.selectedCharacters.some(c => c.id === character.id);
     },
-    viewDetails(character) {
-      this.viewCharacterDetails(character);
+    viewSelectedDetails() {
+      if (this.selectedCharacters.length === 0) {
+        alert('No has seleccionado ningún personaje.');
+      } else {
+        this.showDetails = true;
+      }
     },
     goToPreviousPage() {
       if (this.nextPage > 1) {
@@ -82,6 +97,7 @@ export default {
 </script>
 
 <style>
+/* Estilos del componente */
 </style>
 
 <style>

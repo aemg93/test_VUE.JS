@@ -10,7 +10,8 @@ export default new Vuex.Store({
     nextPage: 1,
     hasNextPage: false,
     selectedCharacters: [],
-    selectedCharacterDetails: null
+    selectedCharacterDetails: null,
+    selectedCharacterId: null
   },
   mutations: {
     setCharacters(state, characters) {
@@ -23,13 +24,20 @@ export default new Vuex.Store({
       state.hasNextPage = hasNextPage;
     },
     addSelectedCharacter(state, character) {
-      state.selectedCharacters.push(character);
+      if (state.selectedCharacters.length < 3) {
+        state.selectedCharacters.push(character);
+      } else {
+        alert('Solo puedes seleccionar hasta tres personajes.');
+      }
     },
     removeSelectedCharacter(state, character) {
       state.selectedCharacters = state.selectedCharacters.filter(c => c.id !== character.id);
     },
     setSelectedCharacterDetails(state, character) {
       state.selectedCharacterDetails = character;
+    },
+    setSelectedCharacterId(state, characterId) {
+      state.selectedCharacterId = characterId;
     }
   },
   actions: {
@@ -52,15 +60,23 @@ export default new Vuex.Store({
         commit('addSelectedCharacter', character);
       }
     },
-    viewCharacterDetails({ commit }, character) {
-      commit('setSelectedCharacterDetails', character);
+    viewCharacterDetails({ commit, state }, characterId) {
+      const character = state.characters.find(c => c.id === characterId);
+      if (character) {
+        commit('setSelectedCharacterId', characterId);
+        commit('setSelectedCharacterDetails', character);
+      }
     }
   },
   getters: {
+
     characters: state => state.characters,
     nextPage: state => state.nextPage,
     hasNextPage: state => state.hasNextPage,
     selectedCharacters: state => state.selectedCharacters,
-    selectedCharacterDetails: state => state.selectedCharacterDetails
+    selectedCharacterDetails: state => state.selectedCharacterDetails,
+    selectedCharacter: state => {
+      return state.characters.find(c => c.id === state.selectedCharacterId);
+    }
   }
 });
