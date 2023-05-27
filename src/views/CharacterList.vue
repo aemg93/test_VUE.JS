@@ -1,58 +1,28 @@
 <template>
   <div>
-    <h1>Lista de Personajes de Rick and Morty</h1>
+    <h2>Personajes de Rick and Morty</h2>
+
     <div class="container">
       <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6" v-for="character in displayedCharacters" :key="character.id">
+        <div v-for="character in characters" :key="character.id" class="col-lg-3 col-md-6 col-sm-12">
           <div class="card mb-3">
-            <img :src="character.image" :alt="character.name" class="card-img-top" width="100">
+            <img :src="character.image" :alt="character.name" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
-              <div class="d-flex  align-items-center">
-                <input type="button" value="Seleccionar" @click="toggleSelection(character)" :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
-                <div class="mx-4"></div>
-                <button @click="viewDetails(character)" class="btn btn-info p-1">Ver detalle</button>
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="selectedCharacters.length > 0">
-      <h2>Personajes seleccionados:</h2>
-      <ul class="selected-characters-list">
-        <li v-for="character in selectedCharacters" :key="character.id">
-          <div>
-            <h4>{{ character.name }}</h4>
-            <img :src="character.image" :alt="character.name" width="100">
-            <p>Estado: {{ character.status }}</p>
-            <p>Especie: {{ character.species }}</p>
-            <!-- Agrega cualquier otra información que desees mostrar -->
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div v-else>
-      <p>No has seleccionado ningún personaje.</p>
-    </div>
 
-    <nav class="pagination-container" aria-label="Pagination">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-          <a class="page-link" href="#" @click="previousPage" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item" v-for="page in totalPages" :key="page" :class="{ 'active': currentPage === page }">
-          <a class="page-link" href="#" @click="goToPage(page)">{{ page }}</a>
-        </li>
-        <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-          <a class="page-link" href="#" @click="nextPage" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <div class="pagination">
+      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary">Anterior</button>
+      <div class="page-indicator">
+        <div class="page-number">{{ nextPage - 1 }}</div>
+        <div class="page-number">{{ nextPage - 1 + hasNextPage }}</div>
+      </div>
+      <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary">Siguiente</button>
+    </div>
   </div>
 </template>
 
@@ -63,88 +33,61 @@ export default {
   data() {
     return {
       characters: [],
-      selectedCharacters: [],
-      currentPage: 1,
-      charactersPerPage: 12
+      nextPage: 1,
+      hasNextPage: true
     };
   },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.characters.length / this.charactersPerPage);
+  methods: {
+    loadCharacters(page) {
+      const url = `https://rickandmortyapi.com/api/character?page=${page}`;
+
+      axios.get(url)
+          .then(response => {
+            this.characters = response.data.results;
+            this.hasNextPage = !!response.data.info.next;
+            if (this.hasNextPage) {
+              this.nextPage = response.data.info.next.split('=')[1];
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
     },
-    displayedCharacters() {
-      const start = (this.currentPage - 1) * this.charactersPerPage;
-      const end = start + this.charactersPerPage;
-      return this.characters.slice(start, end);
+    goToPreviousPage() {
+      if (this.nextPage > 1) {
+        this.loadCharacters(this.nextPage - 1);
+      }
+    },
+    goToNextPage() {
+      if (this.hasNextPage) {
+        this.loadCharacters(this.nextPage);
+      }
     }
   },
   created() {
-    this.fetchCharacters();
-  },
-  methods: {
-    fetchCharacters() {
-      axios.get('https://rickandmortyapi.com/api/character')
-          .then(response => {
-            this.characters = response.data.results;
-          })
-          .catch(error => {
-            console.error(error);
-          });
-    },
-    toggleSelection(character) {
-      if (this.isSelected(character)) {
-        this.selectedCharacters = this.selectedCharacters.filter(c => c.id !== character.id);
-      } else {
-        if (this.selectedCharacters.length < 3) {
-          this.selectedCharacters.push(character);
-        } else {
-          alert('Solo puedes seleccionar un máximo de tres personajes.');
-        }
-      }
-    },
-    isSelected(character) {
-      return this.selectedCharacters.some(c => c.id === character.id);
-    },
-    viewDetails(character) {
-      this.$router.push({ name: 'characterDetails', params: { id: character.id } });
-    },
-    goToPage(page) {
-      this.currentPage = page;
-    },
-    previousPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    }
+    this.loadCharacters(this.nextPage);
   }
 };
 </script>
 
 <style>
-.card {
-  margin-bottom: 10px;
-}
-
-.selected-characters-list {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.pagination-container {
-  margin-top: 20px;
-}
-
-.d-flex {
+.page-indicator {
   display: flex;
+  align-items: center;
 }
 
-.d-flex input,
-.d-flex button {
-  flex: 1;
+.page-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e6e6e6;
+  border: 1px solid #ccc;
+  font-weight: bold;
+}
+
+.page-separator {
+  margin: 0 10px;
 }
 </style>
