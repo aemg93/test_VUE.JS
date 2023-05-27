@@ -9,19 +9,30 @@
             <img :src="character.image" :alt="character.name" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
+              <input type="button" :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'" @click="toggleSelection(character)" :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="pagination">
-      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary">Anterior</button>
+    <div class="selected-characters">
+      <h4>Personajes seleccionados:</h4>
+      <div v-for="character in selectedCharacters" :key="character.id" class="card">
+        <img :src="character.image" :alt="character.name" class="card-img-top">
+        <div class="card-body">
+          <h5 class="card-title">{{ character.name }}</h5>
+          <p>{{ character.species }} | {{ character.status }}</p>
+          <button @click="viewDetails(character)" class="btn btn-info">Ver detalles</button>
+        </div>
+      </div>
+    </div>
+    <div class="pagination d-flex justify-content-center pt-2">
+      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary btn-sm">Anterior</button>
       <div class="page-indicator">
         <div class="page-number">{{ nextPage - 1 }}</div>
         <div class="page-number">{{ nextPage - 1 + hasNextPage }}</div>
       </div>
-      <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary">Siguiente</button>
+      <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary btn-sm">Siguiente</button>
     </div>
   </div>
 </template>
@@ -34,7 +45,8 @@ export default {
     return {
       characters: [],
       nextPage: 1,
-      hasNextPage: true
+      hasNextPage: true,
+      selectedCharacters: []
     };
   },
   methods: {
@@ -62,6 +74,22 @@ export default {
       if (this.hasNextPage) {
         this.loadCharacters(this.nextPage);
       }
+    },
+    toggleSelection(character) {
+      if (this.isSelected(character)) {
+        this.selectedCharacters = this.selectedCharacters.filter(c => c.id !== character.id);
+      } else {
+        if (this.selectedCharacters.length < 3) {
+          this.selectedCharacters.push(character);
+        }
+      }
+    },
+    isSelected(character) {
+      return this.selectedCharacters.some(c => c.id === character.id);
+    },
+    viewDetails(character) {
+      // Aquí puedes implementar la lógica para mostrar los detalles del personaje seleccionado
+      console.log('Detalles del personaje:', character);
     }
   },
   created() {
@@ -87,7 +115,22 @@ export default {
   font-weight: bold;
 }
 
-.page-separator {
-  margin: 0 10px;
+.selected-characters {
+  margin-top: 20px;
+}
+
+.selected-characters .card {
+  width: 200px;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.selected-characters .card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.selected-characters .card-body {
+  padding: 10px;
 }
 </style>
