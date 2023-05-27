@@ -26,72 +26,53 @@
         </div>
       </div>
     </div>
+
+    <div v-if="selectedCharacterDetails" class="character-details">
+      <h4>Detalles del personaje:</h4>
+      <img :src="selectedCharacterDetails.image">
+      <p>Nombre: {{ selectedCharacterDetails.name }}</p>
+      <p>Estado: {{ selectedCharacterDetails.status }}</p>
+      <p>Género: {{ selectedCharacterDetails.gender }}</p>
+      <!-- Agrega más detalles según tus necesidades -->
+    </div>
     <div class="pagination d-flex justify-content-center pt-2">
-      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary btn-sm">Anterior</button>
+      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary btn-sm">&laquo;</button>
       <div class="page-indicator">
         <div class="page-number">{{ nextPage - 1 }}</div>
         <div class="page-number">{{ nextPage - 1 + hasNextPage }}</div>
       </div>
-      <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary btn-sm">Siguiente</button>
+      <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary btn-sm">&raquo;</button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
-  data() {
-    return {
-      characters: [],
-      nextPage: 1,
-      hasNextPage: true,
-      selectedCharacters: []
-    };
+  computed: {
+    ...mapGetters(['characters', 'nextPage', 'hasNextPage', 'selectedCharacters', 'selectedCharacterDetails'])
   },
   methods: {
-    loadCharacters(page) {
-      const url = `https://rickandmortyapi.com/api/character?page=${page}`;
-
-      axios.get(url)
-          .then(response => {
-            this.characters = response.data.results;
-            this.hasNextPage = !!response.data.info.next;
-            if (this.hasNextPage) {
-              this.nextPage = response.data.info.next.split('=')[1];
-            }
-          })
-          .catch(error => {
-            console.log(error);
-          });
+    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails']),
+    toggleSelection(character) {
+      this.toggleCharacterSelection(character);
+    },
+    isSelected(character) {
+      return this.selectedCharacters.some(c => c.id === character.id);
+    },
+    viewDetails(character) {
+      this.viewCharacterDetails(character);
     },
     goToPreviousPage() {
       if (this.nextPage > 1) {
-        this.loadCharacters(this.nextPage - 1);
+        this.loadCharacters(this.nextPage - 2);
       }
     },
     goToNextPage() {
       if (this.hasNextPage) {
         this.loadCharacters(this.nextPage);
       }
-    },
-    toggleSelection(character) {
-      if (this.isSelected(character)) {
-        this.selectedCharacters = this.selectedCharacters.filter(c => c.id !== character.id);
-      } else {
-        if (this.selectedCharacters.length < 3) {
-          this.selectedCharacters.push(character);
-        } else {
-          alert('¡Solo se pueden seleccionar hasta tres personajes!');
-        }
-      }
-    },
-    isSelected(character) {
-      return this.selectedCharacters.some(c => c.id === character.id);
-    },
-    viewDetails(character) {
-      // Aquí puedes implementar la lógica para mostrar los detalles del personaje seleccionado
-      console.log('Detalles del personaje:', character);
     }
   },
   created() {
@@ -99,6 +80,9 @@ export default {
   }
 };
 </script>
+
+<style>
+</style>
 
 <style>
 .page-indicator {
@@ -134,5 +118,8 @@ export default {
 
 .selected-characters .card-body {
   padding: 10px;
+  height: 200px;
+  object-fit: cover;
+  display: inline-block;
 }
 </style>
