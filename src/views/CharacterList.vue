@@ -34,9 +34,9 @@
         <h5>{{ character.name }}</h5>
         <img :src="character.image">
         <p>Nombre: {{ character.name }}</p>
+        <p>Origen: {{ character.origin.name }}</p>
         <p>Estado: {{ character.status }}</p>
         <p>Género: {{ character.gender }}</p>
-        <p>Género: {{ character.results }}</p>
         <hr>
       </div>
     </div>

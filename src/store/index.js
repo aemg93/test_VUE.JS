@@ -27,7 +27,7 @@ export default new Vuex.Store({
       if (state.selectedCharacters.length < 3) {
         state.selectedCharacters.push(character);
       } else {
-        alert('Solo puedes seleccionar hasta tres personajes.');
+        alert('Se puede seleccionar hasta tres elementos de lalista.');
       }
     },
     removeSelectedCharacter(state, character) {
