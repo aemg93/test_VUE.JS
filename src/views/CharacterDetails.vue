@@ -1,141 +1,70 @@
 <template>
-  <div>
-    <h2>Personajes de Rick and Morty</h2>
-
-    <div class="container">
-      <div class="row">
-        <div v-for="character in characters" :key="character.id" class="col-lg-3 col-md-6 col-sm-12">
-          <div class="card mb-3">
-            <img :src="character.image" :alt="character.name" class="card-img-top">
-            <div class="card-body">
+  <div class="container">
+    <h4 class="mt-5">Detalles de los personajes seleccionados:</h4>
+    <div class="row justify-content-center flex-column align-content-around">
+      <div v-for="character in selectedCharacters" :key="character.name" class="col-sm-12 col-md-6 col-lg-6">
+        <div class="card py-3 my-1">
+          <div class="d-flex">
+            <div class="card-image">
+              <img :src="character.image" :alt="character.name" class="character-image">
+            </div>
+            <div class="card-content text-start mx-3">
               <h5 class="card-title">{{ character.name }}</h5>
-              <input type="button" :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'" @click="toggleSelection(character)" :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
+              <p class="card-text">Nombre: {{ character.name }}</p>
+              <p class="card-text">Origen: {{ character.origin.name }}</p>
+              <p class="card-text">Estado: {{ character.status }}</p>
+              <p class="card-text">Género: {{ character.gender }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="selected-characters">
-      <h4>Personajes seleccionados:</h4>
-      <div v-for="character in selectedCharacters" :key="character.id" class="card">
-        <img :src="character.image" :alt="character.name" class="card-img-top">
-        <div class="card-body">
-          <h5 class="card-title">{{ character.name }}</h5>
-          <p>{{ character.species }} | {{ character.status }}</p>
-        </div>
-      </div>
-      <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
-    </div>
-
-    <div v-if="showDetails" class="character-details">
-      <h4>Detalles de los personajes seleccionados:</h4>
-      <div v-for="character in selectedCharacters" :key="character.id">
-        <h5>{{ character.name }}</h5>
-        <img :src="character.image">
-        <p>Nombre: {{ character.name }}</p>
-        <p>Estado: {{ character.status }}</p>
-        <p>Género: {{ character.gender }}</p>
-        <!-- Agrega más detalles según tus necesidades -->
-        <hr>
-      </div>
-    </div>
-
-    <div class="pagination d-flex justify-content-center pt-2">
-      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary btn-sm">&laquo;</button>
-      <div class="page-indicator">
-        <div class="page-number">{{ nextPage - 1 }}</div>
-        <div class="page-number">{{ nextPage - 1 + hasNextPage }}</div>
-      </div>
-      <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary btn-sm">&raquo;</button>
+    <div v-if="selectedCharacters.length === 0" class="alert alert-info mt-3" role="alert">
+      No se ha seleccionado ningún personaje.
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
-
 export default {
-  data() {
-    return {
-      showDetails: false,
-    }
-  },
   computed: {
-    ...mapGetters(['characters', 'nextPage', 'hasNextPage', 'selectedCharacters'])
-  },
-  methods: {
-    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails']),
-    toggleSelection(character) {
-      this.toggleCharacterSelection(character);
-    },
-    isSelected(character) {
-      return this.selectedCharacters.some(c => c.id === character.id);
-    },
-    viewSelectedDetails() {
-      if (this.selectedCharacters.length === 0) {
-        alert('No has seleccionado ningún personaje.');
-      } else {
-        this.showDetails = true;
-      }
-    },
-    goToPreviousPage() {
-      if (this.nextPage > 1) {
-        this.loadCharacters(this.nextPage - 2);
-      }
-    },
-    goToNextPage() {
-      if (this.hasNextPage) {
-        this.loadCharacters(this.nextPage);
-      }
+    selectedCharacters() {
+      return this.$store.getters.selectedCharacters;
     }
   },
-  created() {
-    this.loadCharacters(this.nextPage);
-  }
 };
 </script>
 
 <style>
-/* Estilos del componente */
-</style>
-
-<style>
-.page-indicator {
-  display: flex;
-  align-items: center;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.page-number {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  background-color: #e6e6e6;
-  border: 1px solid #ccc;
-  font-weight: bold;
-}
-
-.selected-characters {
-  margin-top: 20px;
-}
-
-.selected-characters .card {
-  width: 200px;
-  margin-right: 10px;
-  display: inline-block;
-}
-
-.selected-characters .card-img-top {
-  height: 200px;
-  object-fit: cover;
-}
-
-.selected-characters .card-body {
+.card {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
   padding: 10px;
-  height: 200px;
+}
+
+.card-image {
+  text-align: right;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+}
+
+.character-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  display: inline-block;
+}
+
+.card-title {
+  margin-bottom: 0;
+}
+
+.card-text {
+  margin-bottom: 5px;
 }
 </style>

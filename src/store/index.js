@@ -38,7 +38,10 @@ export default new Vuex.Store({
     },
     setSelectedCharacterId(state, characterId) {
       state.selectedCharacterId = characterId;
-    }
+    },
+    resetSelectedCharacters(state) {
+      state.selectedCharacters = [];
+    },
   },
   actions: {
     async loadCharacters({ commit }, page) {
@@ -66,7 +69,10 @@ export default new Vuex.Store({
         commit('setSelectedCharacterId', characterId);
         commit('setSelectedCharacterDetails', character);
       }
-    }
+    },
+    resetSelectedCharacters({ commit }) {
+      commit('resetSelectedCharacters');
+    },
   },
   getters: {
 

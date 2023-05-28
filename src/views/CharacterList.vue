@@ -9,43 +9,21 @@
             <img :src="character.image" :alt="character.name" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
-              <input type="button" :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'" @click="toggleSelection(character)" :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
+              <input type="button"
+                     :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'"
+                     @click="toggleSelection(character)"
+                     :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
+              <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="selected-characters">
-      <h4>Personajes seleccionados:</h4>
-      <div v-for="character in selectedCharacters" :key="character.id" class="card">
-        <img :src="character.image" :alt="character.name" class="card-img-top">
-        <div class="card-body">
-          <h5 class="card-title">{{ character.name }}</h5>
-          <p>{{ character.species }} | {{ character.status }}</p>
-        </div>
-      </div>
-      <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
-    </div>
-
-    <div v-if="showDetails" class="character-details">
-      <h4>Detalles de los personajes seleccionados:</h4>
-      <div v-for="character in selectedCharacters" :key="character.id">
-        <h5>{{ character.name }}</h5>
-        <img :src="character.image">
-        <p>Nombre: {{ character.name }}</p>
-        <p>Origen: {{ character.origin.name }}</p>
-        <p>Estado: {{ character.status }}</p>
-        <p>Género: {{ character.gender }}</p>
-        <hr>
-      </div>
-    </div>
-
-    <div class="pagination d-flex justify-content-center pt-2">
-      <button @click="goToPreviousPage" :disabled="nextPage === 1" class="btn btn-primary btn-sm">&laquo;</button>
+    <div class="pagination d-flex justify-content-center p-5">
+      <button @click="goToPreviousPage" :disabled="currentPage === 1" class="btn btn-primary btn-sm">&laquo;</button>
       <div class="page-indicator">
-        <div class="page-number">{{ nextPage - 1 }}</div>
-        <div class="page-number">{{ nextPage - 1 + hasNextPage }}</div>
+        <div class="page-number">{{ currentPage }}</div>
+        <div class="page-number">{{ currentPage + 1 }}</div>
       </div>
       <button @click="goToNextPage" :disabled="!hasNextPage" class="btn btn-primary btn-sm">&raquo;</button>
     </div>
@@ -53,19 +31,20 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
   data() {
     return {
       showDetails: false,
+      currentPage: 1,
     }
   },
   computed: {
-    ...mapGetters(['characters', 'nextPage', 'hasNextPage', 'selectedCharacters'])
+    ...mapGetters(['characters', 'hasNextPage', 'selectedCharacters']),
   },
   methods: {
-    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails']),
+    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails', 'resetSelection']),
     toggleSelection(character) {
       this.toggleCharacterSelection(character);
     },
@@ -75,23 +54,31 @@ export default {
     viewSelectedDetails() {
       if (this.selectedCharacters.length === 0) {
         alert('No has seleccionado ningún personaje.');
-      } else {
-        this.showDetails = true;
+        return;
       }
+
+      this.$router.push('/characterDetails');
     },
     goToPreviousPage() {
-      if (this.nextPage > 1) {
-        this.loadCharacters(this.nextPage - 2);
+      if (this.currentPage > 1) {
+        this.loadCharacters(this.currentPage - 1);
       }
     },
     goToNextPage() {
       if (this.hasNextPage) {
-        this.loadCharacters(this.nextPage);
+        this.loadCharacters(this.currentPage + 1);
       }
+    },
+    loadCharacters(page) {
+      this.currentPage = page; // Actualizar la página actual
+      this.$store.dispatch('loadCharacters', page);
+    },
+    resetSelection() {
+      this.$store.commit('resetSelectedCharacters');
     }
   },
   created() {
-    this.loadCharacters(this.nextPage);
+    this.loadCharacters(this.currentPage); // Cargar los personajes de la página actual
   }
 };
 </script>
