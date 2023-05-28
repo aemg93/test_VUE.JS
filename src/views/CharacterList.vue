@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Personajes de Rick and Morty</h2>
+    <h2 class="m-5">Personajes de Rick and Morty</h2>
 
     <div class="container">
       <div class="row">
@@ -31,14 +31,14 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
       showDetails: false,
       currentPage: 1,
-    }
+    };
   },
   computed: {
     ...mapGetters(['characters', 'hasNextPage', 'selectedCharacters']),
@@ -53,11 +53,29 @@ export default {
     },
     viewSelectedDetails() {
       if (this.selectedCharacters.length === 0) {
-        alert('No has seleccionado ningún personaje.');
+        this.showAlert('No has seleccionado ningún personaje.', 'success');
         return;
       }
 
       this.$router.push('/characterDetails');
+    },
+    showAlert(message, style) {
+      const alertElement = document.createElement('div');
+      alertElement.style.backgroundColor = style === 'success' ? '#28a745' : '#dc3545';
+      alertElement.style.color = '#fff';
+      alertElement.style.padding = '10px';
+      alertElement.style.borderRadius = '5px';
+      alertElement.style.position = 'fixed';
+      alertElement.style.top = '50%';
+      alertElement.style.left = '50%';
+      alertElement.style.transform = 'translate(-50%, -50%)';
+      alertElement.innerText = message;
+
+      document.body.appendChild(alertElement);
+
+      setTimeout(() => {
+        document.body.removeChild(alertElement);
+      }, 3000);
     },
     goToPreviousPage() {
       if (this.currentPage > 1) {
@@ -70,22 +88,18 @@ export default {
       }
     },
     loadCharacters(page) {
-      this.currentPage = page; // Actualizar la página actual
+      this.currentPage = page;
       this.$store.dispatch('loadCharacters', page);
     },
     resetSelection() {
       this.$store.commit('resetSelectedCharacters');
-    }
+    },
   },
   created() {
-    this.loadCharacters(this.currentPage); // Cargar los personajes de la página actual
-  }
+    this.loadCharacters(this.currentPage);
+  },
 };
 </script>
-
-<style>
-/* Estilos del componente */
-</style>
 
 <style>
 .page-indicator {
@@ -104,8 +118,17 @@ export default {
   font-weight: bold;
 }
 
-.selected-characters {
-  margin-top: 20px;
+.card-title {
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-title {
+  transform: scale(0.9);
 }
 
 .selected-characters .card {
