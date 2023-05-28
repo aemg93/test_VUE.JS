@@ -1,19 +1,26 @@
 <template>
   <div>
     <h2 class="m-5">Personajes de Rick and Morty</h2>
-
-    <div class="container">
+    <div v-if="isLoading" class="loading-animation">
+      <div class="spinner"></div>
+    </div>
+    <div v-else-if="isError" class="error-message">
+      Ha ocurrido un error al cargar los datos. Por favor, intenta nuevamente.
+    </div>
+    <div v-else class="container">
       <div class="row">
         <div v-for="character in characters" :key="character.id" class="col-lg-3 col-md-6 col-sm-12">
           <div class="card mb-3">
             <img :src="character.image" :alt="character.name" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
-              <input type="button"
-                     :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'"
-                     @click="toggleSelection(character)"
-                     :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
-              <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
+              <div class="input-button-container">
+                <input type="button"
+                       :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'"
+                       @click="toggleSelection(character)"
+                       :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
+                <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
+              </div>
             </div>
           </div>
         </div>
@@ -40,9 +47,11 @@ export default {
       currentPage: 1,
     };
   },
+
   computed: {
-    ...mapGetters(['characters', 'hasNextPage', 'selectedCharacters']),
+    ...mapGetters(['characters', 'hasNextPage', 'selectedCharacters', 'isLoading', 'isError']),
   },
+
   methods: {
     ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails', 'resetSelection']),
     toggleSelection(character) {
@@ -95,6 +104,7 @@ export default {
       this.$store.commit('resetSelectedCharacters');
     },
   },
+
   created() {
     this.loadCharacters(this.currentPage);
   },
@@ -147,5 +157,40 @@ export default {
   height: 200px;
   object-fit: cover;
   display: inline-block;
+}
+
+.loading-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  margin: 10px;
+  padding: 10px;
+  background-color: #dc3545;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.input-button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 </style>
