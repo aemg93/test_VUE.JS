@@ -1,15 +1,49 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Lista de personajes</router-link> |
-      <router-link to="characterDetails/2">Detalle de personajes</router-link>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
+      <button class="navbar-toggler mx-2" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" @click="toggleMenu">
+              <i class='bx bx-menu ' ></i>
+      </button>
+      <div class="collapse navbar-collapse mx-5" :class="{ 'show': isMenuOpen }">
+        <ul class="navbar-nav ml-auto text-start">
+          <li class="nav-item ">
+            <router-link class="nav-link text-dark" to="/">Lista de personajes</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link text-dark" to="/CharacterDetails">Detalle de personajes</router-link>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" @click.prevent="resetSelection" href="#">
+              Reset
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
     <router-view/>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 
+export default {
+  data() {
+    return {
+      isMenuOpen: false
+    };
+  },
+  methods: {
+    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails', 'resetSelection']),
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
+    },
+    resetSelection() {
+      this.$store.commit('resetSelectedCharacters');
+    }
+  }
+}
 </script>
 
 <style>
@@ -20,17 +54,12 @@
   text-align: center;
   color: #2c3e50;
 }
-
-nav {
-  padding: 30px;
-}
-
-nav a {
+.nav-link {
   font-weight: bold;
-  color: #2c3e50;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
+
+
+
+
 </style>
