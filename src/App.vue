@@ -1,65 +1,29 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
-      <button class="navbar-toggler mx-2" type="button" data-toggle="collapse" data-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" @click="toggleMenu">
-              <i class='bx bx-menu ' ></i>
-      </button>
-      <div class="collapse navbar-collapse mx-5" :class="{ 'show': isMenuOpen }">
-        <ul class="navbar-nav ml-auto text-start">
-          <li class="nav-item ">
-            <router-link class="nav-link text-dark" to="/">Lista de personajes</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link text-dark" to="/CharacterDetails">Detalle de personajes</router-link>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-dark" @click.prevent="resetSelection" href="#">
-              Reset
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <router-view/>
+    <nav-bar />
+    <mi-footer />
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import NavBar from "@/components/NavBar.vue";
+import MiFooter from "@/components/MiFooter.vue";
 
 export default {
-  data() {
-    return {
-      isMenuOpen: false
-    };
-  },
-  methods: {
-    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails', 'resetSelection']),
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
-    resetSelection() {
-      this.$store.commit('resetSelectedCharacters');
-    }
+  name: 'App',
+  components: {
+    NavBar,
+    MiFooter
   }
-}
+};
 </script>
 
 <style>
+body {
+  background-color: #000;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Arial, sans-serif;
   text-align: center;
-  color: #2c3e50;
 }
-.nav-link {
-  font-weight: bold;
-}
-
-
-
-
-
 </style>

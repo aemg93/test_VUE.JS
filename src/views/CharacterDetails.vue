@@ -36,7 +36,7 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      isLoading: false,
+
     };
   },
   computed: {

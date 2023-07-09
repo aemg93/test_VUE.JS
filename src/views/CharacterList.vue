@@ -14,12 +14,13 @@
             <img :src="character.image" :alt="character.name" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
-              <div class="input-button-container">
+              <div class="input-button-container d-flex flex-column flex-md-row align-items-center w-100">
                 <input type="button"
+                       class="button-select w-100 w-md-100 mb-2 mb-md-0 mr-md-2"
                        :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'"
                        @click="toggleSelection(character)"
                        :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
-                <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
+                <button @click="viewSelectedDetails" class="btn btn-info button-select w-100 w-md-100">Ver detalles</button>
               </div>
             </div>
           </div>
@@ -191,6 +192,22 @@ export default {
 .input-button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 8px;
+}
+
+.button-select {
+  margin-right: 5px;
+}
+
+@media screen and (max-width: 1399px) {
+  .button-select {
+    padding: 10px 0 !important;
+    font-size: 15px !important;
+    width: 45%;
+    margin-right: 4px;
+  }
+  .card-body {
+    padding: 2px !important;
+  }
 }
 </style>
