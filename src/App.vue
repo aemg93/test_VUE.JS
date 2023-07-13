@@ -10,7 +10,6 @@
 <script>
 import miHeader from "@/components/MiHeader.vue";
 import miFooter from "@/components/MiFooter.vue";
-
 export default {
   name: 'App',
   components: {

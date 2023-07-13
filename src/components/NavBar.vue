@@ -23,7 +23,6 @@
               Reset
             </a>
           </li>
-
         </ul>
       </div>
     </nav>
@@ -40,6 +39,7 @@ export default {
       isMenuOpen: false,
       isFixedTop: false,
       isResetActive: false
+
     };
   },
   methods: {
@@ -104,7 +104,5 @@ export default {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-
-
 }
 </style>

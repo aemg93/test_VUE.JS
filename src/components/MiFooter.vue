@@ -15,6 +15,7 @@
   </footer>
 </template>
 
+
 <script>
 export default {
   data() {
@@ -97,12 +98,12 @@ export default {
 .show-network-name {
   opacity: 1;
 }
-@media screen and (max-width: 991px){
+@media screen and (max-width: 991px) {
   .social-links li:nth-child(1) a i {
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    box-shadow: 0px 3px 10px rgba(0,0,0,.25);
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, .25);
   }
 
   .social-links li:nth-child(2) a i {
@@ -112,6 +113,5 @@ export default {
   .social-links li:nth-child(3) a i {
     color: #00ACEE;
   }
-
 }
 </style>

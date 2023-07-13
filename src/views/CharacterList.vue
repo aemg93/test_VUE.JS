@@ -197,7 +197,23 @@ export default {
 .input-button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 8px;
+}
+
+.button-select {
+  margin-right: 5px;
+}
+
+@media screen and (max-width: 1399px) {
+  .button-select {
+    padding: 10px 0 !important;
+    font-size: 15px !important;
+    width: 45%;
+    margin-right: 4px;
+  }
+  .card-body {
+    padding: 2px !important;
+  }
 }
 
 .selected-button {
