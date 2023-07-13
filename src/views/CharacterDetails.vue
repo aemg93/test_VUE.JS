@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h4 class="mt-5">Detalles de los personajes seleccionados:</h4>
+    <h4 class="mt-5 pt-5">Detalles de los personajes seleccionados:</h4>
     <div v-if="isLoading" class="loading-animation">
       <div class="spinner"></div>
     </div>
@@ -36,7 +36,7 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      isLoading: false,
+
     };
   },
   computed: {
@@ -50,7 +50,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   max-width: 1200px;
   margin: 0 auto;

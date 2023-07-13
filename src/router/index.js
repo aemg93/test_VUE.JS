@@ -2,14 +2,16 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import CharacterList from '@/views/CharacterList.vue';
 import CharacterDetails from '@/views/CharacterDetails.vue';
+import MiHome from "@/views/MiHome.vue";
+
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'characterInformation',
-    component: CharacterList
+    name: 'MiHome',
+    component: MiHome
   },
   {
     path: '/characterList',

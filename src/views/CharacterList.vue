@@ -1,24 +1,27 @@
 <template>
   <div>
-    <h2 class="m-5">Personajes de Rick and Morty</h2>
+    <h2 class="p-3 text-white">Personajes de Rick and Morty</h2>
     <div v-if="isLoading" class="loading-animation">
       <div class="spinner"></div>
     </div>
     <div v-else-if="isError" class="error-message">
       Ha ocurrido un error al cargar los datos. Por favor, intenta nuevamente.
     </div>
-    <div v-else class="container">
+    <div v-else class="container cards-ws">
       <div class="row">
         <div v-for="character in characters" :key="character.id" class="col-lg-3 col-md-6 col-sm-12">
-          <div class="card mb-3">
+          <div class="card col12 mb-3 bg-dark">
             <img :src="character.image" :alt="character.name" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title">{{ character.name }}</h5>
-              <div class="input-button-container">
-                <input type="button"
-                       :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'"
-                       @click="toggleSelection(character)"
-                       :class="isSelected(character) ? 'btn btn-primary' : 'btn btn-secondary'">
+              <div class="input-button-container flex-column flex-sm-row">
+                <input
+                    type="button"
+                    :value="isSelected(character) ? 'Seleccionado' : 'Seleccionar'"
+                    @click="toggleSelection(character)"
+                    class="btn mb-2 mb-sm-0"
+                    :class="['btn', isSelected(character) ? 'btn-success' : 'btn-secondary', isSelected(character) ? 'selected-button' : '']"
+                >
                 <button @click="viewSelectedDetails" class="btn btn-info">Ver detalles</button>
               </div>
             </div>
@@ -36,6 +39,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
@@ -111,7 +115,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .page-indicator {
   display: flex;
   align-items: center;
@@ -126,6 +130,7 @@ export default {
   background-color: #e6e6e6;
   border: 1px solid #ccc;
   font-weight: bold;
+  color: rgb(0, 0, 0);
 }
 
 .card-title {
@@ -135,6 +140,7 @@ export default {
   white-space: nowrap;
   transform: scale(1);
   transition: transform 0.3s ease;
+  color: #fff; /* Color blanco para las fuentes */
 }
 
 .card:hover .card-title {
@@ -192,5 +198,18 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+}
+
+.selected-button {
+  padding: 4px;
+}
+
+@media screen and (max-width: 1199px) and (min-width: 992px){
+  .cards-ws {
+    max-width: 978px;
+  }
+  .btn {
+    font-size: 12px;
+  }
 }
 </style>
