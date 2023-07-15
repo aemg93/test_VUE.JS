@@ -17,7 +17,13 @@ export default new Vuex.Store({
   },
   mutations: {
     setCharacters(state, characters) {
-      state.characters = characters;
+      const charactersWithEpisodes = characters.map(character => {
+        return {
+          ...character,
+          episodes: []
+        };
+      });
+      state.characters = charactersWithEpisodes;
     },
     setNextPage(state, nextPage) {
       state.nextPage = nextPage;
@@ -68,6 +74,18 @@ export default new Vuex.Store({
         commit('setLoadingState', false);
       }
     },
+    async loadCharacterEpisodes({ commit }, character) {
+      try {
+        const episodeRequests = character.episode.map(episodeUrl => axios.get(episodeUrl));
+        const episodeResponses = await Promise.all(episodeRequests);
+        const episodes = episodeResponses.map(response => response.data);
+        commit('setSelectedCharacterDetails', { ...character, episodes });
+        commit('setErrorState', false); // Clear error state if successful
+      } catch (error) {
+        console.error('Error loading character episodes:', error);
+        commit('setErrorState', true); // Set error state
+      }
+    },
     toggleCharacterSelection({ commit, state }, character) {
       const isSelected = state.selectedCharacters.some(c => c.id === character.id);
       if (isSelected) {
@@ -76,11 +94,15 @@ export default new Vuex.Store({
         commit('addSelectedCharacter', character);
       }
     },
-    viewCharacterDetails({ commit, state }, characterId) {
+    viewCharacterDetails({ commit, dispatch, state }, characterId) {
       const character = state.characters.find(c => c.id === characterId);
       if (character) {
         commit('setSelectedCharacterId', characterId);
-        commit('setSelectedCharacterDetails', character);
+        if (!character.episodes || character.episodes.length === 0) {
+          dispatch('loadCharacterEpisodes', character);
+        } else {
+          commit('setSelectedCharacterDetails', character);
+        }
       }
     },
     resetSelectedCharacters({ commit }) {
@@ -92,7 +114,10 @@ export default new Vuex.Store({
     nextPage: state => state.nextPage,
     hasNextPage: state => state.hasNextPage,
     selectedCharacters: state => state.selectedCharacters,
-    selectedCharacterDetails: state => state.selectedCharacterDetails,
+    selectedCharacterDetails: state => {
+      const character = state.characters.find(c => c.id === state.selectedCharacterId);
+      return character ? { ...character } : null;
+    },
     selectedCharacter: state => {
       return state.characters.find(c => c.id === state.selectedCharacterId);
     },

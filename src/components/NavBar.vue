@@ -18,7 +18,7 @@
           <li :class="{ 'nav-item': true, 'active': $route.path === '/CharacterDetails' }">
             <router-link class="nav-link" to="/CharacterDetails">Detalle de personajes</router-link>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="hasSelectedCharacters">
             <a class="nav-link" @click.prevent="resetSelection" href="#">
               Reset
             </a>
@@ -31,31 +31,32 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
     return {
       isMenuOpen: false,
-      isFixedTop: false,
-      isResetActive: false
-
+      isFixedTop: false
     };
   },
+  computed: {
+    ...mapGetters(['selectedCharacters']),
+    hasSelectedCharacters() {
+      return this.selectedCharacters.length > 0;
+    }
+  },
   methods: {
-    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails', 'resetSelection']),
+    ...mapActions(['loadCharacters', 'toggleCharacterSelection', 'viewCharacterDetails', 'resetSelectedCharacters']),
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
     resetSelection() {
-      this.isResetActive = true;
-      this.$store.commit('resetSelectedCharacters');
-      this.$nextTick(() => {
-        const activeNavItem = this.$el.querySelector('.nav-item.active');
-        if (activeNavItem) {
-          activeNavItem.classList.remove('active');
-        }
-      });
+      this.resetSelectedCharacters();
+      const activeNavItem = this.$el.querySelector('.nav-item.active');
+      if (activeNavItem) {
+        activeNavItem.classList.remove('active');
+      }
     },
     handleScroll() {
       this.isFixedTop = window.scrollY > 1;
@@ -79,7 +80,6 @@ export default {
 .nav-link:hover {
   margin-bottom: 0;
   color: #0bf5f5;
-
 }
 
 .nav-link {
@@ -93,6 +93,7 @@ export default {
   color: #0bf5f5;
   border-bottom: 1px solid;
 }
+
 .navbar {
   background-color: transparent;
   backdrop-filter: blur(10px);

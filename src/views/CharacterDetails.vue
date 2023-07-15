@@ -13,11 +13,15 @@
                 <img :src="character.image" :alt="character.name" class="character-image">
               </div>
               <div class="card-content text-start mx-3">
-                <h5 class="card-title">{{ character.name }}</h5>
-                <p class="card-text">Nombre: {{ character.name }}</p>
+                <h5 class="card-title pb-2">{{ character.name }}</h5>
+                <p class="card-text">Especie: {{ character.species }}</p>
+                <p class="card-text">Genero: {{ character.gender }}</p>
                 <p class="card-text">Origen: {{ character.origin.name }}</p>
                 <p class="card-text">Estado: {{ character.status }}</p>
-                <p class="card-text">Género: {{ character.gender }}</p>
+
+                <button @click="removeCharacter(character)" class="btn btn-danger btn-delete">
+                  <i class="bx bx-trash"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -31,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   data() {
@@ -42,9 +46,10 @@ export default {
   computed: {
     ...mapGetters(['selectedCharacters', 'isLoading']),
   },
-  watch: {
-    isLoading(newLoadingState) {
-      this.isLoading = newLoadingState;
+  methods: {
+    ...mapMutations(['removeSelectedCharacter']),
+    removeCharacter(character) {
+      this.removeSelectedCharacter(character);
     },
   },
 };
@@ -60,6 +65,7 @@ export default {
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   padding: 10px;
+  position: relative;
 }
 
 .card-image {
@@ -99,8 +105,9 @@ export default {
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.btn-delete {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 </style>
